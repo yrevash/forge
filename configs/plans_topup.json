@@ -1,0 +1,84 @@
+{
+ "note": "Focus moves for the top-up stream (forge/plans_data/topup.py). Chosen on 6 Oct 2026 at 02:00 from the cell counts of the first 10 random shards: the single cells projected to stay under 2,000 in train (a named corner, gap and across under a part, groups, a part between two sets).",
+ "moves": [
+  {
+   "kind": "on top of",
+   "rep": "corner"
+  },
+  {
+   "kind": "on top of",
+   "rep": "corner"
+  },
+  {
+   "kind": "on top of",
+   "rep": "corner"
+  },
+  {
+   "kind": "on top of",
+   "rep": "corner"
+  },
+  {
+   "kind": "under",
+   "rep": "corner"
+  },
+  {
+   "kind": "under",
+   "rep": "corner"
+  },
+  {
+   "kind": "under",
+   "rep": "corner"
+  },
+  {
+   "kind": "under",
+   "rep": "corner"
+  },
+  {
+   "kind": "under",
+   "option": "gap"
+  },
+  {
+   "kind": "under",
+   "option": "gap"
+  },
+  {
+   "kind": "under",
+   "option": "across",
+   "sets": true
+  },
+  {
+   "kind": "under",
+   "option": "across",
+   "sets": true
+  },
+  {
+   "kind": "under",
+   "rep": "grid"
+  },
+  {
+   "kind": "under",
+   "rep": "evenly spaced"
+  },
+  {
+   "group": true
+  },
+  {
+   "group": true
+  },
+  {
+   "group": true
+  },
+  {
+   "group": true
+  },
+  {
+   "between": true
+  },
+  {
+   "between": true
+  },
+  {
+   "raised": true
+  }
+ ]
+}

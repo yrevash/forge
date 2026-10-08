@@ -1,0 +1,11 @@
+seat: box 420 by 420 by 30, above ground, top at height 450
+front legs: box 40 by 40 by rest, under seat, down to ground, at the front corners of seat
+back legs: box 40 by 40 by rest, under seat, down to ground, at the back corners of seat
+back posts: box 40 by 40 by rest, on top of seat, top at height 900, at the back corners of seat
+side aprons: box 20 by rest by 60, between front legs and back legs, top flush with seat's bottom
+front apron: box rest by 20 by 60, between front legs, top flush with seat's bottom
+back apron: box rest by 20 by 60, between back legs, top flush with seat's bottom
+top rail: box rest by 20 by 80, between back posts, top 20 below back posts' top
+lower rail: box rest by 20 by 40, between back posts, bottom 110 above seat's top
+slats: box 40 by 12 by rest, between lower rail and top rail, 3 evenly spaced along length
+done

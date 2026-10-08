@@ -1,0 +1,65 @@
+# Forge-S1, the THIRD model: it names where every argument comes from.
+# The base variant: 6 layers of width 160, previous commands in the view.
+# Code: forge/s1/third/.
+name: s1-third
+seed: 0
+
+data:
+  folder: data/s1/v3            # forge.s1.third.prepare
+  data_device: cpu              # 19 GB of arrays: kept in ordinary memory, batches go to the GPU
+  # train_v2, train_long_v2: the second models' data. *_cf: 10% of their steps with two plan
+  # features swapped, relabelled by the teacher. *_sc: 15% with every length scaled.
+  # train_wide_v3: the first 146 shards (the audited ones) of the wide data.
+  # dagger_*: states the model itself reached, labelled by the teacher (added per round).
+  train_slices: [train_v2, train_long_v2, train_wide_v3, train_v2_cf, train_long_v2_cf, train_v2_sc,
+                 train_long_v2_sc]
+  train_shards: null
+  train_max_steps: null
+  # TRAIN shards that are never trained on. They pick best.pt (the mean of their strict
+  # "all steps" accuracy: command AND binding right) and they decide between the variants
+  # (size, previous commands). No test slice is read in training or uploaded.
+  held_out_groups:
+    held_out_short:
+      shards: [train_v2/shard193.npz, train_v2/shard194.npz, train_v2/shard195.npz]
+      steps: 20000
+    held_out_long:
+      shards: [train_long_v2/shard053.npz, train_long_v2/shard054.npz, train_long_v2/shard055.npz]
+      steps: 20000
+    held_out_wide:
+      shards: [train_wide_v3/shard143.npz, train_wide_v3/shard144.npz, train_wide_v3/shard145.npz]
+      steps: 20000
+    held_out_order:
+      shards: [train_v2_cf/shard193.npz, train_v2_cf/shard194.npz, train_v2_cf/shard195.npz,
+               train_long_v2_cf/shard053.npz, train_long_v2_cf/shard054.npz,
+               train_long_v2_cf/shard055.npz]
+      steps: null
+    held_out_scaled:
+      shards: [train_v2_sc/shard193.npz, train_v2_sc/shard194.npz, train_v2_sc/shard195.npz,
+               train_long_v2_sc/shard053.npz, train_long_v2_sc/shard054.npz,
+               train_long_v2_sc/shard055.npz]
+      steps: null
+  monitor_slice: null
+
+model:                          # forge/s1/third/model.py
+  width: 160
+  layers: 6
+  heads: 4
+  mlp_width: 640
+  dropout: 0.0
+  use_history: true             # the two previous commands on the session row
+
+train:
+  batch_size: 512
+  passes: 1.4                   # sized from the probe run: about 2,350 examples a second on a shared T4
+  max_steps: null
+  lr: 1.0e-3
+  min_lr: 0.0
+  warmup_steps: 500
+  weight_decay: 0.01
+  grad_clip: 1.0
+  random_ids: false             # row id = index (no-ids was equal or better)
+  mixed_precision: true
+
+log_every: 100
+eval_every: 2000
+checkpoint_minutes: 10

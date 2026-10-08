@@ -1,0 +1,29 @@
+# Dataset v0: verified parts from our own generators, with spec-style captions.
+# Every value here is a choice that can be changed; rebuild with:
+#   uv run python -m forge.data.build_dataset --config configs/dataset_v0.yaml
+
+version: v0
+seed: 0
+
+# Whole families kept out of training, to test new combinations of known features
+# (split name: test_ood_family). Chosen because each recombines things other
+# families teach: a square outline with a centre hole; a flange-and-web section.
+holdout_families:
+  - square_nut
+  - t_section
+
+# Standard sizes kept out of training in every fastener family (test_ood_params).
+holdout_sizes:
+  - M12
+  - M5
+
+# For families without standard sizes: the middle band of the first dimension is
+# kept out of training (test_ood_params). Quantiles of that dimension's values.
+holdout_band: [0.45, 0.55]
+
+# The rest is divided by a hash of the part's geometry, so identical shapes
+# always land in the same split.
+fractions:
+  train: 0.90
+  val: 0.05
+  test_id: 0.05

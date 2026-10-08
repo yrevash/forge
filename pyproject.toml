@@ -1,0 +1,25 @@
+[project]
+name = "forge"
+version = "0.0.1"
+description = "Small open text-to-CAD model: data layer, models and harness"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "cadquery",          # CAD kernel (OpenCascade) used to build and measure every part
+    "numpy",
+    "pyarrow",           # read Zero-to-CAD parquet shards column by column
+    "huggingface_hub",   # range-read remote parquet without downloading whole shards
+    "pyyaml",
+    "pillow>=12.3.0",
+    "torch>=2.14.1",     # Forge-S1 (forge/s1): the model and its training loop. BSD-3-Clause
+]
+
+[dependency-groups]
+dev = ["pytest", "ruff"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]   # the repo root is the import root; run modules as `python -m forge.<name>`

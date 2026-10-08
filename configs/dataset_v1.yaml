@@ -1,0 +1,59 @@
+# Dataset v1: verified parts from our own generators, each with several prompts at
+# several levels of detail and in varied wording.
+# Every value here is a choice that can be changed; rebuild with:
+#   uv run python -m forge.data.build_dataset --config configs/dataset_v1.yaml
+
+version: v1
+seed: 0
+
+# How many prompts to make per part, by level. Every part also gets the canonical
+# spec caption(s). Standard parts get many more, because a standard defines only
+# so many sizes and people ask for them in many ways ("M8 nut", "nut M8 ISO 4032").
+prompts:
+  standard:
+    designation: 24
+    compact: 6
+    request: 8
+  free:
+    compact: 2
+    request: 3
+
+# The most parts one family may contribute, so families generated in very
+# different amounts end up balanced. `default` applies to every family; a family
+# name or a pattern (composed_*) overrides it; null means no cap. A family over
+# its cap keeps a fixed subset chosen by a hash of the part id and `seed`. Parts
+# with a standard designation (M8, ISO 4762 ...) are never cut. Remove this key
+# to use every generated part.
+max_parts_per_family:
+  default: 3000
+  "composed_*": null
+
+# Whole families kept out of training, to test new combinations of known features
+# (split name: test_ood_family).
+holdout_families:
+  - square_nut
+  - t_section
+
+# Standard sizes kept out of training in every fastener family (test_ood_params).
+holdout_sizes:
+  - M12
+  - M5
+
+# For families without standard sizes: the middle band of the first dimension is
+# kept out of training (test_ood_params). Quantiles of that dimension's values.
+holdout_band: [0.45, 0.55]
+
+# The rest is divided by a hash of the part's geometry, so identical shapes
+# always land in the same split.
+fractions:
+  train: 0.90
+  val: 0.05
+  test_id: 0.05
+
+# Repair pairs (learning from mistakes). Only used when
+# data/mistakes/<family>.jsonl exists (made by forge.data.mistakes); without it
+# the build writes no repair files. One repair is one wrong program; it is paired
+# with at most this many of its part's prompts, so parts with many prompts
+# (standard sizes) do not flood the repair files.
+repairs:
+  prompts_per_repair: 2

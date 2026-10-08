@@ -1,0 +1,77 @@
+base: box 400 by 300 by 20, on ground
+tray: box 200 by 150 by 40, above ground, bottom at height 300, left 150 beyond base's left
+lamp: sphere 40, above ground, top at height 700
+legs: cylinder 30 by 200, on top of base, inset 20, at each corner of base
+deck: box rest by rest by 20, on top of legs, across legs
+column: tube 60 by 50 by 150, on top of deck
+knob: sphere 60, on top of column, sunk 15 into column
+cap: dome 30 by 10, on top of knob
+stem: cylinder same as cap's diameter by rest, between cap and lamp
+nut: prism 6 by 40 by 15, under deck, on the same axis as column
+ramp: wedge 80 by 60 by 30 pointing left, left of base, flush with base's bottom, flush with base's front
+blade: wedge 60 by 10 by 20 pointing right flat back, right of base, gap 10
+link: box rest by 10 by 10, between base and blade
+spike: cone 30 by 0 by 60 pointing down, under tray, offset 60 to the left
+funnel: cone 50 by 20 by 40, on top of tray, flush with tray's left
+plinth: tapered box 100 by 80 by 60 by 40 by 50, in front of base, flush with base's bottom
+bowl: dome 60 by 20 pointing down, on top of plinth
+angle: bar L 30 by 30 by 3 by 200 lying along depth, left of tray
+tee: bar T 30 by 30 by 3 by default, behind base, flush with base's bottom
+channel: bar U 30 by 20 by 3 by 200 lying along length, behind tray
+joist: bar I 40 by 60 by 4 by rest, between base and deck, offset 100 to the right
+pipe: bar tube 20 by 2 by rest, under tray, down to ground
+on column's left: hole diameter 10
+axle: cylinder 10 by 60 lying along length, through column
+collar: tube 80 by 60 by 10, around column, bottom 20 above column's bottom
+on tray: hollowed out wall 5, open at top
+liner: box half of tray's length by third of tray's depth by quarter of tray's height, inside tray
+divider: box 5 by rest by 20, inside tray, left 40 inside tray's inner left
+plug: cylinder 50 by 10, inside column, flush with column's inner bottom
+tower: box 20 by 20 by double base's height, on top of base, flush with base's front, offset 60 to the right
+stay: box rest by 10 by 10, spans from base's top-back-left corner to tray's bottom-back edge
+strut: cylinder 8 by rest, spans from base's top-left edge to tray's bottom-front edge
+lip: box 100 by 5 by 10, in front of deck, top flush with deck's bottom
+fence: box 5 by 100 by 30, on top of deck, left 10 inside deck's left
+ledge: box 20 by 100 by 5, left of deck, back 15 beyond deck's back
+shelf: box 100 by 80 by 10, right of column, top 100 below column's top
+hook: box 10 by 10 by rest, behind deck, bottom 50 above base's top, flush with deck's top
+pegs: cylinder 10 by 20, on top of deck, at the front corners of deck
+stud: cylinder 10 by 20, on top of deck, at the back-left corner of deck
+slats: box 10 by 100 by 5, on top of deck, 4 evenly spaced along length
+rungs: box 100 by 10 by 5, under deck, 2 spread along depth
+tiles: box 30 by 30 by 3, on top of base, grid 3 by 2
+bolts: cylinder 8 by 10, on top of deck, 6 around column on circle 150
+fins: wedge 40 by 5 by 60 pointing left, left of column, flush with column's top, 4 around column facing outward
+lugs: box 20 by 10 by 10, on top of deck, 4 around column on circle 200 facing outward
+ears: box 10 by 10 by 30, on top of deck, flush with deck's left, offset 90 to the back, mirrored left-right
+handles: box 40 by 10 by 10, right of tray, flush with tray's front, inset 20, mirrored front-back
+rail: box rest by 10 by 10, between ears
+caps: sphere 12, on top of pegs
+group wheel pair
+  hub: cylinder 20 by 60 lying along depth
+  front wheel: tube 80 by 20 by 10 lying along depth, in front of hub
+  back wheel: tube 80 by 20 by 10 lying along depth, behind hub
+end
+wheels: wheel pair, behind base, down to ground, flush with base's left, inset 40, mirrored left-right
+on deck: hole diameter 8
+on deck: blind hole diameter 8, depth 5, 30 from deck's left, 20 from deck's front
+on deck: counterbored hole hole diameter 6, diameter 12, depth 4, at (50, -20)
+on tower's front: rounded corners radius 3
+on tower: boss diameter 10, height 5, centred
+on deck: pad length 40, width 20, height 3, 40 from deck's right
+on deck's front: pocket length 30, width 8, depth 4
+on deck's front: slot length 12, width 6, depth 3, angle 90, 60 from deck's left
+on base: circle of holes count 6, hole diameter 5, circle diameter 120
+on base: row of holes count 4, hole diameter 5, spacing 20
+on base: pair of holes diameter 6, at (150, 0)
+on base: pair of bosses diameter 10, height 4, at (60, 40)
+on base: pair of pockets length 20, width 10, depth 3, at (60, -40)
+on plinth: top chamfer size 2
+on shelf: top fillet radius 2
+on tray's inner left: hole diameter 4
+extra: box 10 by 10 by 10, on top of shelf
+undo
+spare: box 10 by 10 by 10, on top of shelf
+on spare: hole diameter 3
+undo to spare
+done

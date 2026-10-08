@@ -1,0 +1,38 @@
+# Forge-S1, first model. Read by forge/s1/train.py.
+name: s1-first
+seed: 0
+
+data:
+  folder: data/s1/v1            # made by: uv run python -m forge.s1.prepare
+  train_slices: [train_v2]
+  train_shards: null            # null = every shard; or a list like [train_v2/shard000.npz]
+  train_max_steps: null         # only the first so many steps (the overfit smoke test)
+  # The last three shards of train_v2 are never trained on. They pick the best checkpoint,
+  # so that no test slice is used for any choice.
+  held_out_shards: [train_v2/shard193.npz, train_v2/shard194.npz, train_v2/shard195.npz]
+  held_out_steps: 20000         # the first so many steps of the held-out shards
+  monitor_slice: iid_v2         # a fixed sample of a test slice, watched and logged only
+  monitor_steps: 20000
+
+model:                          # forge/s1/model.py
+  width: 160                    # size of every row vector
+  layers: 6
+  heads: 4
+  mlp_width: 640
+  dropout: 0.0                  # 5.5 million steps for about 2 million parameters: not compared yet
+
+train:
+  batch_size: 512
+  passes: 3.0                   # how many times over the training steps (about 12 minutes each on one T4)
+  max_steps: null               # set a number to stop earlier (smoke tests)
+  lr: 1.0e-3                    # peak learning rate
+  min_lr: 0.0
+  warmup_steps: 500
+  weight_decay: 0.01            # not applied to biases, norms and embeddings
+  grad_clip: 1.0
+  random_ids: true
+  mixed_precision: true         # used on CUDA only
+
+log_every: 100                  # optimiser steps between two lines of metrics.jsonl
+eval_every: 2000                # optimiser steps between two evaluations
+checkpoint_minutes: 10

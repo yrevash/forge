@@ -1,0 +1,17 @@
+# never commit data, runs, checkpoints or secrets
+/data/
+/runs/
+checkpoints/
+*.gguf
+.env
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+*.egg-info/
+
+# third-party checkouts and scratch work (not our code)
+/external/
+/media/

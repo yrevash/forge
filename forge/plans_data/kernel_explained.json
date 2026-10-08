@@ -1,0 +1,3 @@
+{
+ "c3daf4d868e7e8a5": "Not the plan's fault and not the resolver's: the kernel-side distance test (forge/assembly_geometry.py, OCC BRepExtrema through Shape.distance) returns 0 for the pairs fins 6 / outer riser 3 and fins 3 / outer riser 2, which are 0.0979 mm apart by arithmetic. The flat top of a standing cylinder lies exactly in the plane that is tangent to the underside of a lying cylinder, with the tangent line 1.58 mm outside the flat disc. Moving the lying cylinder by 0.00003 mm makes the same kernel call return 0.0979. The resolver's verdict (apart) is right; the plan is kept."
+}

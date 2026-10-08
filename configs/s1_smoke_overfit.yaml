@@ -1,0 +1,40 @@
+# Smoke test 1: can the pipeline learn at all? 4,096 steps, seen about 60 times each.
+# The loss must go to nearly zero. The monitor numbers mean little here.
+# Forge-S1, first model. Read by forge/s1/train.py.
+name: s1-smoke-overfit
+seed: 0
+
+data:
+  folder: data/s1/v1            # made by: uv run python -m forge.s1.prepare
+  train_slices: [train_v2]
+  train_shards: [train_v2/shard000.npz]            # null = every shard; or a list like [train_v2/shard000.npz]
+  train_max_steps: 4096         # only the first so many steps (the overfit smoke test)
+  # The last three shards of train_v2 are never trained on. They pick the best checkpoint,
+  # so that no test slice is used for any choice.
+  held_out_shards: null
+  held_out_steps: 20000         # the first so many steps of the held-out shards
+  monitor_slice: iid_v2         # a fixed sample of a test slice, watched and logged only
+  monitor_steps: 5000
+
+model:                          # forge/s1/model.py
+  width: 160                    # size of every row vector
+  layers: 6
+  heads: 4
+  mlp_width: 640
+  dropout: 0.0                  # 5.5 million steps for about 2 million parameters: not compared yet
+
+train:
+  batch_size: 256
+  passes: 2.0                   # how many times over the training steps
+  max_steps: 1000               # set a number to stop earlier (smoke tests)
+  lr: 1.0e-3                    # peak learning rate
+  min_lr: 0.0
+  warmup_steps: 50
+  weight_decay: 0.01            # not applied to biases, norms and embeddings
+  grad_clip: 1.0
+  random_ids: true
+  mixed_precision: true         # used on CUDA only
+
+log_every: 50                  # optimiser steps between two lines of metrics.jsonl
+eval_every: 500                # optimiser steps between two evaluations
+checkpoint_minutes: 10

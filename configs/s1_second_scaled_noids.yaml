@@ -1,0 +1,64 @@
+# Forge-S1, comparison: the second model with scaled copies WITHOUT random row ids.
+# configs/s1_second_scaled.yaml with train.random_ids false; nothing else differs.
+# RENAMED on 8 Oct 2026: this file was configs/s1_third_noids.yaml and its run was named
+# "s1-third-noids" (that name is inside the checkpoint and its Kaggle run folder). "third" is kept free for the real third model.
+name: s1-second-scaled-noids
+seed: 0
+
+data:
+  folder: data/s1/v1            # made by forge.s1.prepare, then forge.s1.augment for the _cf slices
+  # train_long_v2: sessions of NEW long parts (plans of 7 to 13 items), none of them a part
+  # of the long test (forge/freecad/long_train_parts.py --check, and the audit).
+  # *_cf: counterfactual copies of 10% of the steps of the two slices above: two plan
+  # features swapped, the same state, the teacher's label for the swapped plan
+  # (forge/s1/augment.py; labels checked in FreeCAD by forge/s1/augment_proof.py).
+  # *_sc: copies of 15% of the steps with every length of plan and state multiplied by one
+  # factor in 0.75 to 1.35 (forge/s1/augment.py --kind scale): the same answer, sizes that
+  # are not whole numbers.
+  train_slices: [train_v2, train_long_v2, train_v2_cf, train_long_v2_cf, train_v2_sc,
+                 train_long_v2_sc]
+  train_shards: null
+  train_max_steps: null
+  # Never trained on; they pick best.pt (the highest mean "all steps" accuracy of the
+  # groups). No test slice is read during training: there is no monitor slice any more.
+  held_out_groups:
+    held_out_short:             # plans of 2 to 6 items: the same three shards as the first model
+      shards: [train_v2/shard193.npz, train_v2/shard194.npz, train_v2/shard195.npz]
+      steps: 20000
+    held_out_long:              # plans of 7 to 13 items
+      shards: [train_long_v2/shard053.npz, train_long_v2/shard054.npz, train_long_v2/shard055.npz]
+      steps: 20000
+    held_out_order:             # the counterfactual copies of the same six shards, all of them
+      shards: [train_v2_cf/shard193.npz, train_v2_cf/shard194.npz, train_v2_cf/shard195.npz,
+               train_long_v2_cf/shard053.npz, train_long_v2_cf/shard054.npz,
+               train_long_v2_cf/shard055.npz]
+      steps: null
+    held_out_scaled:            # the scaled copies of the same six shards, all of them
+      shards: [train_v2_sc/shard193.npz, train_v2_sc/shard194.npz, train_v2_sc/shard195.npz,
+               train_long_v2_sc/shard053.npz, train_long_v2_sc/shard054.npz,
+               train_long_v2_sc/shard055.npz]
+      steps: null
+  monitor_slice: null
+
+model:                          # forge/s1/model.py; 2,166,241 parameters, as the first model
+  width: 160
+  layers: 6
+  heads: 4
+  mlp_width: 640
+  dropout: 0.0
+
+train:                          # exactly configs/s1_first.yaml, but for random_ids (see there)
+  batch_size: 512
+  passes: 3.0
+  max_steps: null
+  lr: 1.0e-3
+  min_lr: 0.0
+  warmup_steps: 500
+  weight_decay: 0.01
+  grad_clip: 1.0
+  random_ids: false             # THE difference: row id = index, in training too
+  mixed_precision: true
+
+log_every: 100
+eval_every: 2000
+checkpoint_minutes: 10

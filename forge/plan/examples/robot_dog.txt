@@ -1,0 +1,13 @@
+body: box 160 by 400 by 120, above ground, top at height 380
+group leg
+  upper: box 40 by 50 by 160
+  lower: box 30 by 40 by 120, under upper
+  foot: box 50 by 70 by 20, under lower
+end
+front legs: leg, left of body, down to ground, flush with body's front, inset 30, offset 5 to the right, mirrored left-right
+back legs: leg, left of body, down to ground, flush with body's back, inset 30, offset 5 to the right, mirrored left-right
+neck: box 60 by 60 by 70, on top of body, flush with body's front
+head: box 110 by 140 by 90, on top of neck, offset 40 to the front
+ears: box 30 by 15 by 40, on top of head, flush with head's left, inset 20, mirrored left-right
+tail: box 20 by 20 by 110, on top of body, flush with body's back
+done

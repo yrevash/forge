@@ -1,0 +1,8 @@
+first stage: cylinder 370 by 4200, on ground
+second stage: cylinder 370 by 1400, on top of first stage
+adapter: cone 370 by 520 by 200, on top of second stage
+fairing: cylinder 520 by 800, on top of adapter
+nose: cone 520 by 0 by 500, on top of fairing
+fins: wedge 250 by 20 by 400 pointing left, left of first stage, flush with first stage's bottom, 4 around first stage facing outward
+band: tube 390 by 370 by 40, around first stage, flush with first stage's top
+done
