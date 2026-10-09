@@ -2,6 +2,73 @@
 
 Forge-S1 is a small model that builds CAD parts step by step inside FreeCAD from a structured plan. At every step it reads the plan and the live state of the FreeCAD document, chooses the next command, says which plan item it is working on and where each value of the command comes from, undoes a step that turned out wrong, and says when the part is done.
 
+- Model: https://huggingface.co/yrevash/forge-s1 (2.6M parameters, runs on a laptop CPU)
+- Data: https://huggingface.co/datasets/yrevash/forge-d1
+
+The result is an ordinary FreeCAD model with its full feature history, not a mesh.
+
+## How it is used: a planner and an executor
+
+Forge-S1 is the executor half of a two-part system.
+
+```
+"a control panel, 300 x 200,      PLANNER                  FORGE-S1                 FreeCAD
+ with a screen and a stop   --->  writes a plan    --->    builds it,       --->    document with
+ button"                          (a list of items)        command by command       feature history
+```
+
+- **The planner** turns a request in words into a plan. It needs knowledge of the world (what a control panel is, what sizes make sense). Any language model that can write the JSON below can be the planner, or a person can write the plan by hand. No planner is included in this repository.
+- **Forge-S1** needs no knowledge of the world. It takes the plan and does the building: several FreeCAD commands per plan item, each one chosen from the live state of the FreeCAD document.
+
+### The plan format
+
+A plan is a JSON file with a `name` and a `plan`: a list of items in building order. Each item has a `kind` and its `slots`. Lengths are millimetres, angles are degrees, `x` and `y` are measured from the centre of the base.
+
+```
+{"name": "a block with rounded corners",
+ "plan": [
+  {"kind": "block", "slots": {"length": 320.0, "width": 320.0, "height": 30.0}},
+  {"kind": "corner_radius", "slots": {"radius": 20.0}}
+ ]}
+```
+
+| Group | Kind | Slots |
+| --- | --- | --- |
+| Base (exactly one, first) | `block` | length, width, height |
+| | `cylinder` | diameter, height |
+| | `hex` | across_flats, height |
+| | `ring` | outer_diameter, inner_diameter, height |
+| Edge treatment | `corner_radius` (block only) | radius |
+| | `top_chamfer` | size |
+| | `top_fillet` | radius |
+| | `shell` | wall_thickness |
+| Feature on the top face | `hole` | diameter, x, y |
+| | `blind_hole` | diameter, depth, x, y |
+| | `counterbore` | hole_diameter, diameter, depth, x, y |
+| | `boss` | diameter, height, x, y |
+| | `pad` | length, width, height, x, y |
+| | `pocket` | length, width, depth, x, y |
+| | `slot` | length, width, depth, angle, x, y |
+| | `polar` (holes on a circle) | count, hole_diameter, circle_diameter |
+| | `row` (holes along the length) | count, hole_diameter, spacing, y |
+| | `hole_pair`, `boss_pair`, `pocket_pair` (mirrored left and right) | as the single feature |
+
+The table in code is `forge/system1/steps.py`; the full contract is `docs/STEPS.md`. Plans of 1 to 16 items. Features must lie inside the base and must not overlap.
+
+### Using a language model as the planner
+
+Give the model the table above and the rules under it, ask for the JSON only, and save its answer as a plan file. A prompt of this shape is enough:
+
+```
+You write plans for a CAD executor. Answer with JSON only: {"name": ..., "plan": [...]}.
+Each plan item is {"kind": ..., "slots": {...}} using only the kinds and slots in this table: <the table>.
+Rules: one base first; millimetres; x and y from the centre of the base; every feature inside
+the base and not overlapping another; at most 16 items.
+Request: <what the person asked for>
+```
+
+Then let Forge-S1 build it (next section). The executor reports whether the finished solid matches the plan, so a wrong build is not passed on silently. Ready-made plans are in `examples/`.
+
 ## What is in the repository
 
 ```
@@ -21,6 +88,7 @@ forge/
   remote/               record FreeCAD sessions on a Linux machine
   s1/                   the Forge-S1 models: encoding, network, loss, training, evaluation, closed-loop driver
   s1/third/             the released model: it also names where every argument comes from
+examples/               plans the model can build
 configs/                training and dataset configs
 scripts/                shell scripts for the long FreeCAD jobs
 tests/                  the test suite
@@ -51,6 +119,12 @@ uv run pytest tests/test_s1_third.py
 ```
 
 ## Load the model and drive one part
+
+Download the model:
+
+```
+uvx --from huggingface_hub hf download yrevash/forge-s1 forge-s1.pt --local-dir .
+```
 
 The released model is one checkpoint file, `forge-s1.pt`. It is opened as plain data (`forge.s1.train.load_checkpoint`, weights only), and `forge.s1.third.drive.load_any_model` builds the network from it.
 
@@ -85,3 +159,10 @@ More commands are in `forge/s1/third/README.md`.
 - Single parts only.
 - Features are built on the top face.
 - The model follows the order of the plan.
+
+## Licence and credit
+
+- Code and model: Apache License 2.0 (`LICENSE`).
+- Dataset (Forge-D1): Creative Commons Attribution 4.0.
+
+You may use, change and share all of it, also commercially. The one condition is credit: say "Forge-S1 by Yash Tiwari (yrevash)" and link to this repository.

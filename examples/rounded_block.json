@@ -1,0 +1,19 @@
+{
+ "name": "A block with rounded corners",
+ "plan": [
+  {
+   "kind": "block",
+   "slots": {
+    "length": 320.0,
+    "width": 320.0,
+    "height": 30.0
+   }
+  },
+  {
+   "kind": "corner_radius",
+   "slots": {
+    "radius": 20.0
+   }
+  }
+ ]
+}
